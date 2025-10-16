@@ -12,7 +12,7 @@ WORKDIR /item-integration-service
 #COPY pom.xml sop-config-service/pom.xml
 
 #COPY ../pom.xml .	
-RUN mvn -B -e -C org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
+#RUN mvn -B -e -C org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
 RUN ls -ltr
 #RUN cat pom.xml
 # Copy the source code
