@@ -104,7 +104,9 @@ public class ItemListenerService {
             publishItemToWMS(itemEvent, value);
             ack.acknowledge();  // Ack only on full success (no exception thrown)
 
-        } catch (JsonProcessingException e) {
+        } 
+        
+        catch (JsonProcessingException e) {
             String errorMsg = String.format("JSON parsing failed for payload '%s' from partition %d: %s (%s)", 
                     value != null ? value.substring(0, Math.min(100, value.length())) + "..." : "null", partition, e.getMessage(), e.getClass().getSimpleName());
             log.error(errorMsg, e);
@@ -232,7 +234,9 @@ public class ItemListenerService {
             try {
                 isItemExistInWMS = wmsAdapter.isItemExists(itemName);  // Throws I/O on network/API error
                 log.info("WMS API check for item {}: exists = {}", itemName, isItemExistInWMS);
-            } catch (IOException e) {
+            } 
+            
+            catch (Exception e) {
                 String errorMsg = String.format("API I/O Error in WMS existence check for item %s: %s (%s)", itemName, e.getMessage(), e.getClass().getSimpleName());
                 log.error(errorMsg, e);
                 // Log error

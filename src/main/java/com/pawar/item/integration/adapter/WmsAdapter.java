@@ -57,7 +57,7 @@ public class WmsAdapter {
 		log.info("WmsAdapter initialized successfully with all dependencies");
 	}
 
-	public boolean isItemExists(String itemName) throws IOException {
+	public boolean isItemExists(String itemName){
 		if (itemName == null || itemName.trim().isEmpty()) {
 			String errorMsg = "itemName is null or empty – cannot check WMS existence";
 			log.warn(errorMsg);
@@ -95,27 +95,25 @@ public class WmsAdapter {
 				validationLogsService.logResult(null, itemName, errorMsg, ValidationLogsConstants.FAILED,
 						ValidationLogsConstants.ITEM_VALIDATION, null, now, now,
 						ValidationLogsConstants.ITEM_VALIDATION, ValidationLogsConstants.ITEM_VALIDATION);
-				// Return false or throw? For semantic errors, return false; for server errors,
-				// throw
-				if (response.getStatusCode().is5xxServerError()) {
-					throw new IOException(errorMsg); // Re-throw for retry
-				}
+				
 				return false;
 			}
 
-		} catch (HttpHostConnectException e) {
-			// Specific connect error (e.g., refused)
-			String errorMsg = String.format("Connection refused to WMS for item %s: %s (URL: %s)", itemName,
-					e.getMessage(), url);
-			log.error(errorMsg, e);
-			LocalDateTime now = LocalDateTime.now();
-			// Log as failed
-			validationLogsService.logResult(null, itemName, errorMsg, ValidationLogsConstants.FAILED,
-					ValidationLogsConstants.ITEM_VALIDATION, null, now, now, ValidationLogsConstants.ITEM_VALIDATION,
-					ValidationLogsConstants.ITEM_VALIDATION);
-			throw e; // Re-throw to let caller (validateItem) handle (set FAILED, don't post)
-
-		} catch (HttpClientErrorException | HttpServerErrorException e) {
+		} 
+//		catch (HttpHostConnectException e) {
+//			// Specific connect error (e.g., refused)
+//			String errorMsg = String.format("Connection refused to WMS for item %s: %s (URL: %s)", itemName,
+//					e.getMessage(), url);
+//			log.error(errorMsg, e);
+//			LocalDateTime now = LocalDateTime.now();
+//			// Log as failed
+//			validationLogsService.logResult(null, itemName, errorMsg, ValidationLogsConstants.FAILED,
+//					ValidationLogsConstants.ITEM_VALIDATION, null, now, now, ValidationLogsConstants.ITEM_VALIDATION,
+//					ValidationLogsConstants.ITEM_VALIDATION);
+//			//throw e; // Re-throw to let caller (validateItem) handle (set FAILED, don't post)
+//
+//		} 
+		catch (HttpClientErrorException | HttpServerErrorException e) {
 			// Client/Server HTTP errors (e.g., 4xx/5xx after connection)
 			String errorMsg = String.format("HTTP error from WMS for item %s: Status=%d, Response=%s", itemName,
 					e.getStatusCode().value(), e.getResponseBodyAsString());
@@ -125,10 +123,7 @@ public class WmsAdapter {
 			validationLogsService.logResult(null, itemName, errorMsg, ValidationLogsConstants.FAILED,
 					ValidationLogsConstants.ITEM_VALIDATION, null, now, now, ValidationLogsConstants.ITEM_VALIDATION,
 					ValidationLogsConstants.ITEM_VALIDATION);
-			// For 4xx (client error, e.g., bad request), return false; for 5xx, throw
-			if (e.getStatusCode().is5xxServerError()) {
-				throw new IOException(errorMsg, e); // Re-throw for retry
-			}
+			
 			return false;
 
 		} catch (RestClientException e) {
@@ -141,7 +136,7 @@ public class WmsAdapter {
 			validationLogsService.logResult(null, itemName, errorMsg, ValidationLogsConstants.FAILED,
 					ValidationLogsConstants.ITEM_VALIDATION, null, now, now, ValidationLogsConstants.ITEM_VALIDATION,
 					ValidationLogsConstants.ITEM_VALIDATION);
-			throw new IOException(errorMsg, e); // Re-throw as IOException for upper layers
+			return false;
 
 		} catch (Exception e) {
 			// Unexpected (e.g., NullPointer)
@@ -152,7 +147,7 @@ public class WmsAdapter {
 			validationLogsService.logResult(null, itemName, errorMsg, ValidationLogsConstants.FAILED,
 					ValidationLogsConstants.ITEM_VALIDATION, null, now, now, ValidationLogsConstants.ITEM_VALIDATION,
 					ValidationLogsConstants.ITEM_VALIDATION);
-			throw new IOException(errorMsg, e); // Re-throw
+			return false;
 		}
 	}
 
