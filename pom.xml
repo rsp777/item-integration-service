@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.pawar.item.integration</groupId>
 	<artifactId>item-integration-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>item-integration-service</name>
 	<description>item-integration-service</description>
 	<properties>
