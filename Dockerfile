@@ -40,7 +40,7 @@ RUN apk add --no-cache wget curl
 
 # Copy the jar from the build stage
 COPY src/main/resources/logback.xml /item-integration-service/logback.xml
-COPY target/item-integration-service-0.0.1-SNAPSHOT.jar  /item-integration-service/item-integration-service.jar
+COPY target/item-integration-service-1.0.0.jar  /item-integration-service/item-integration-service.jar
 RUN mkdir logs
 RUN pwd
 
